@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Email List</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div class="nav">
+      <a href="index.html">Email List</a>
+      <a href="sqlGateway.html">SQL Gateway</a>
+      <a href="admin.html">Admin</a>
+    </div>
+    <div class="center-wrap">
+      <h1>Join our email list</h1>
+      <p class="muted">To join our email list, enter your name and email address below.</p>
+
+      <div class="center-card">
+        <form id="subscribeForm" novalidate>
+          <div class="form-row">
+            <label for="email">Email:</label>
+            <input id="email" name="email" type="email" placeholder="" required>
+            <div id="emailErr" class="field-err" aria-live="polite"></div>
+          </div>
+          <div class="form-row">
+            <label for="firstName">First Name:</label>
+            <input id="firstName" name="firstName" placeholder="">
+          </div>
+          <div class="form-row">
+            <label for="lastName">Last Name:</label>
+            <input id="lastName" name="lastName" placeholder="">
+          </div>
+
+          <div style="margin-top:8px">
+            <button id="submitBtn" class="btn-dark" type="submit">Join Now</button>
+          </div>
+        </form>
+      </div>
+
+      <a class="back-link" href="/">Back to menu</a>
+    </div>
+
+    <script>
+      document.getElementById('subscribeForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+
+        try {
+          // basic client-side validation
+          const emailErr = document.getElementById('emailErr');
+          emailErr.textContent = '';
+          if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+            emailErr.textContent = 'Please enter a valid email address.';
+            return;
+          }
+
+          const r = await fetch('/api/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, firstName, lastName })
+          });
+          if (r.ok) {
+            // success using server
+            document.getElementById('submitBtn').disabled = true;
+            setTimeout(()=>{
+              // server mode: go to admin listing
+              const url = `/admin`;
+              window.location.href = url;
+            }, 400);
+            return;
+          }
+          const data = await r.json().catch(()=>({}));
+          // if server responded with error, show it
+          if (!r.ok) {
+            emailErr.textContent = data.error || 'Error subscribing';
+            return;
+          }
+        } catch (err) {
+          // Network error / fetch failed (no server). Save to localStorage as mock fallback.
+          const emailErr = document.getElementById('emailErr');
+          emailErr.textContent = 'Request failed: Failed to fetch';
+
+          try {
+            const key = 'mockEmails_v1';
+            const prev = JSON.parse(localStorage.getItem(key) || '[]');
+            prev.push({ email, firstName, lastName, createdAt: new Date().toISOString() });
+            localStorage.setItem(key, JSON.stringify(prev));
+            // fallback: redirect to local admin listing (mock mode)
+            setTimeout(()=>{
+              const url = `admin.html`;
+              window.location.href = url;
+            }, 800);
+          } catch (e) {
+            emailErr.textContent = 'Request failed and fallback save failed.';
+          }
+        }
+      });
+
+        document.getElementById('clearBtn').addEventListener('click', ()=>{
+          document.getElementById('email').value = '';
+          document.getElementById('firstName').value = '';
+          document.getElementById('lastName').value = '';
+          document.getElementById('emailErr').textContent = '';
+        });
+
+      // highlight active nav link (works for file:// and http:// paths)
+      (function(){
+        const path = window.location.pathname.toLowerCase();
+        // get only the last path segment (filename) or default to index.html
+        let page = path.split('/').pop() || 'index.html';
+        if (!page) page = 'index.html';
+        document.querySelectorAll('.nav a').forEach(a => {
+          try{
+            const href = a.getAttribute('href').toLowerCase();
+            // normalize href just the filename
+            const hrefName = href.split('/').pop();
+            if (hrefName === page) a.classList.add('active');
+          } catch(e){}
+        });
+      })();
+    </script>
+  </body>
+</html>

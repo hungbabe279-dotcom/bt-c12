@@ -1,0 +1,79 @@
+/* Enhanced UI styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+:root{
+	--bg:#f7f9fb;
+	--card:#ffffff;
+	--muted:#8b97a6;
+	--border:#e6eef6;
+	--primary:#2563eb;
+	--primary-2:#1e40af;
+	--shadow:0 10px 30px rgba(16,24,40,0.08);
+}
+*{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:#0f1724;line-height:1.45}
+
+.nav{background:#fff;padding:14px 28px;border-bottom:1px solid var(--border);box-shadow:0 1px 0 rgba(16,24,40,0.02)}
+.nav a{margin-right:18px;color:#334155;text-decoration:none;padding:8px 12px;border-radius:8px}
+.nav a.active{background:linear-gradient(180deg, rgba(37,99,235,0.08), rgba(37,99,235,0.04));color:var(--primary);font-weight:600}
+
+.container{max-width:980px;margin:48px auto;padding:0 24px}
+
+.hero{display:flex;gap:40px;align-items:flex-start;margin-bottom:18px}
+.hero h1{font-size:40px;margin:6px 0 8px;color:#0b1220}
+.hero p{margin:0;color:var(--muted);font-size:15px}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;box-shadow:var(--shadow)}
+.card.form-card{max-width:720px}
+
+.form-row{margin-bottom:16px}
+.form-row label{display:block;margin-bottom:8px;font-weight:600;color:#1f2937}
+.form-row input, .form-row textarea{width:100%;padding:14px;border:1px solid #e6eef6;border-radius:10px;background:#fbfdff;outline:none;transition:box-shadow .12s, border-color .12s}
+.form-row input::placeholder, .form-row textarea::placeholder{color:#9aa6b3}
+.form-row input:focus, .form-row textarea:focus{border-color:var(--primary);box-shadow:0 6px 24px rgba(37,99,235,0.08)}
+
+.btn{background:linear-gradient(180deg,var(--primary),var(--primary-2));color:#fff;border:none;padding:14px 18px;border-radius:8px;cursor:pointer;width:100%;font-weight:700;box-shadow:0 6px 20px rgba(37,99,235,0.12);letter-spacing:0.2px}
+.btn.secondary{background:#fff;color:var(--primary);border:1px solid var(--border);box-shadow:none}
+
+.thank-box{background:#f2fbf7;border-left:4px solid #10b981;padding:18px;border-radius:8px;margin-bottom:18px}
+.info-box{background:#f6f8fb;padding:18px;border-radius:8px;border:1px solid #eef3fa}
+
+.result-table{width:100%;border-collapse:collapse;margin-top:14px;background:#fff;border-radius:8px;overflow:hidden}
+.result-table th, .result-table td{border-bottom:1px solid #f1f5f9;padding:12px;text-align:left;font-size:14px}
+.result-table thead th{background:#fbfdff;color:#0f1724;font-weight:700}
+.small-note{color:var(--muted);margin-top:18px}
+
+/* responsiveness */
+@media (max-width:720px){
+	.hero{flex-direction:column}
+	.hero h1{font-size:28px}
+	.container{margin:20px auto;padding:0 16px}
+}
+
+/* Join page split layout */
+.split{display:flex;gap:20px;align-items:center}
+.illustration{flex:0 0 260px;display:flex;align-items:center;justify-content:center}
+.illustration img{max-width:100%;height:auto}
+.two-col{display:flex}
+
+.field-err{color:#dc2626;margin-top:6px;font-size:13px}
+
+/* toast */
+.toast{position:fixed;right:20px;bottom:24px;background:#0f1724;color:#fff;padding:12px 16px;border-radius:10px;box-shadow:0 12px 36px rgba(2,6,23,0.28);transform:translateY(8px);opacity:0;transition:all .28s ease}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* Screenshot-style centered form */
+.center-wrap{max-width:980px;margin:56px auto;padding:0 24px;text-align:center}
+.center-wrap h1{font-size:34px;margin-bottom:6px}
+.center-wrap p.muted{max-width:640px;margin:0 auto 22px;color:var(--muted)}
+.center-card{width:380px;margin:18px auto;padding:20px;border-radius:10px;background:#fff;border:1px solid #eee;box-shadow:0 10px 30px rgba(16,24,40,0.06)}
+.form-row{margin-bottom:14px;text-align:left}
+.form-row label{font-weight:700;display:block;margin-bottom:8px;color:#333}
+.form-row input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #e6e6e6;background:#fafafa}
+.btn-dark{background:#222;color:#fff;border:none;padding:12px;border-radius:8px;cursor:pointer;font-weight:600;width:100%}
+.back-link{display:block;margin-top:18px;color:#374151;text-decoration:none}
+
+@media (max-width:420px){
+	.center-card{width:92%;padding:16px}
+}
+

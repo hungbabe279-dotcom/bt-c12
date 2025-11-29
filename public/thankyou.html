@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thank You</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div class="nav">
+      <a href="index.html">Email List</a>
+      <a href="sqlGateway.html">SQL Gateway</a>
+      <a href="admin.html">Admin</a>
+    </div>
+    <div class="container">
+      <div class="hero">
+        <div>
+          <h1>Thank You</h1>
+          <p class="muted">You have successfully joined our email list.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="info-box">
+          <p><strong>Email:</strong> <span id="emailVal"></span></p>
+          <p><strong>First Name:</strong> <span id="firstVal"></span></p>
+          <p><strong>Last Name:</strong> <span id="lastVal"></span></p>
+        </div>
+
+        <p class="small-note">To add another email address, click the button below.</p>
+        <div style="margin-top:18px">
+          <a href="/emailList"><button class="btn secondary" style="width:100%;">Add Another</button></a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function qs(name) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(name) || '';
+      }
+      document.getElementById('emailVal').textContent = qs('email');
+      document.getElementById('firstVal').textContent = qs('first');
+      document.getElementById('lastVal').textContent = qs('last');
+
+      // highlight active nav link (works for file:// and http:// paths)
+      (function(){
+        const path = window.location.pathname.toLowerCase();
+        let page = path.split('/').pop() || 'index.html';
+        if (!page) page = 'index.html';
+        document.querySelectorAll('.nav a').forEach(a => {
+          try{
+            const href = a.getAttribute('href').toLowerCase();
+            const hrefName = href.split('/').pop();
+            if (hrefName === page) a.classList.add('active');
+          }catch(e){}
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SQL Gateway</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div class="nav">
+      <a href="index.html">Email List</a>
+      <a href="sqlGateway.html">SQL Gateway</a>
+      <a href="admin.html">Admin</a>
+    </div>
+    <div class="container">
+      <div class="hero">
+        <div>
+          <h1>SQL Gateway</h1>
+          <p class="muted">Enter an SQL statement below and execute it against the database.</p>
+        </div>
+      </div>
+
+      <div style="height:10px"></div>
+      <div class="card form-card">
+        <div class="form-row">
+          <label for="sql">SQL Statement</label>
+          <textarea id="sql" rows="8">select * from "user"</textarea>
+        </div>
+        <div style="margin-top:12px">
+          <button id="execBtn" class="btn">Execute Query</button>
+        </div>
+
+        <div id="resultArea"></div>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById('execBtn').addEventListener('click', async function () {
+        const sql = document.getElementById('sql').value;
+        const area = document.getElementById('resultArea');
+        area.innerHTML = '';
+        try {
+          const r = await fetch('/api/execute-sql', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sql })
+          });
+          const data = await r.json();
+          if (!r.ok) {
+            area.innerHTML = `<div class="small-note">Error: ${data.error || 'Unknown'}</div>`;
+            return;
+          }
+          const rows = data.rows || [];
+          if (rows.length === 0) {
+            area.innerHTML = '<div class="small-note">No rows returned.</div>';
+            return;
+          }
+          // build table
+          const cols = Object.keys(rows[0]);
+          let html = '<table class="result-table"><thead><tr>' + cols.map(c=>`<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+          for (const rrow of rows) {
+            html += '<tr>' + cols.map(c=>`<td>${String(rrow[c]===null?'':rrow[c])}</td>`).join('') + '</tr>';
+          }
+          html += '</tbody></table>';
+          area.innerHTML = html;
+        } catch (err) {
+          area.innerHTML = `<div class="small-note">Request failed: ${err.message}</div>`;
+        }
+      });
+
+      // highlight active nav link (works for file:// and http:// paths)
+      (function(){
+        const path = window.location.pathname.toLowerCase();
+        let page = path.split('/').pop() || 'index.html';
+        if (!page) page = 'index.html';
+        document.querySelectorAll('.nav a').forEach(a => {
+          try{
+            const href = a.getAttribute('href').toLowerCase();
+            const hrefName = href.split('/').pop();
+            if (hrefName === page) a.classList.add('active');
+          }catch(e){}
+        });
+      })();
+    </script>
+  </body>
+</html>

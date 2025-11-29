@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: sql-gateway-demo
+    env: node
+    plan: free
+    region: oregon
+    repo: REPLACE_WITH_YOUR_GIT_REPO
+    branch: main
+    buildCommand: "npm install"
+    startCommand: "npm start"
+    envVars: []

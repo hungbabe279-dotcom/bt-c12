@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin - Emails</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div class="nav">
+      <a href="index.html">Email List</a>
+      <a href="sqlGateway.html">SQL Gateway</a>
+      <a href="admin.html" class="active">Admin</a>
+    </div>
+    <div class="container">
+      <h1>Subscribed Emails</h1>
+      <p class="muted">Recent subscribers (newest first).</p>
+      <div style="height:14px"></div>
+      <div class="card">
+        <div id="listArea">Loading…</div>
+      </div>
+    </div>
+
+    <script>
+      async function load() {
+        const area = document.getElementById('listArea');
+        try {
+          const r = await fetch('/api/emails');
+          if (!r.ok) throw new Error('API returned '+r.status);
+          const data = await r.json();
+          const rows = data.rows || [];
+          if (rows.length === 0) return area.innerHTML = '<div class="small-note">No subscribers yet.</div>';
+          let html = '<table class="result-table"><thead><tr><th>#</th><th>Email</th><th>First</th><th>Last</th><th>Joined</th></tr></thead><tbody>';
+          for (const r of rows) html += `<tr><td>${r.id}</td><td>${r.email}</td><td>${r.firstName}</td><td>${r.lastName}</td><td>${r.createdAt}</td></tr>`;
+          html += '</tbody></table>';
+          area.innerHTML = html;
+          return;
+        } catch (err) {
+          // if fetch failed (no server), fall back to localStorage mock data
+          const key = 'mockEmails_v1';
+          const prev = JSON.parse(localStorage.getItem(key) || '[]');
+          if (!prev || prev.length === 0) return area.innerHTML = '<div class="small-note">No subscribers yet (no server and no mock data).</div>';
+          let html = '<table class="result-table"><thead><tr><th>#</th><th>Email</th><th>First</th><th>Last</th><th>Joined</th></tr></thead><tbody>';
+          let id = 1;
+          for (const r of prev.slice().reverse()) {
+            html += `<tr><td>${id++}</td><td>${r.email}</td><td>${r.firstName||''}</td><td>${r.lastName||''}</td><td>${new Date(r.createdAt).toLocaleString()}</td></tr>`;
+          }
+          html += '</tbody></table>';
+          area.innerHTML = html;
+        }
+      }
+      load();
+
+      // highlight active nav link (file + http)
+      (function(){
+        const path = window.location.pathname.toLowerCase();
+        let page = path.split('/').pop() || 'admin.html';
+        if (!page) page = 'admin.html';
+        document.querySelectorAll('.nav a').forEach(a => {
+          try{
+            const href = a.getAttribute('href').toLowerCase();
+            const hrefName = href.split('/').pop();
+            if (hrefName === page) a.classList.add('active');
+          }catch(e){}
+        });
+      })();
+    </script>
+  </body>
+</html>
